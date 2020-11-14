@@ -3,7 +3,7 @@ export default class Journal extends Component {
   render() {
     return (
       <div>
-        <h3>Resources</h3> 
+        <h3>Journal</h3> 
       </div>
     );
   }

@@ -5,12 +5,9 @@ import { Jumbotron, Button } from "react-bootstrap";
 export default class Home extends Component {
   render() {
     return (
-        <Jumbotron>
-          <h2> Welcome </h2>
-          <Link to="/resources">
-            <Button bsStyle="primary">Resources</Button>
-          </Link>
-        </Jumbotron>
+      <div>
+      <h3>Home</h3> 
+    </div>
     );
   }
 }
