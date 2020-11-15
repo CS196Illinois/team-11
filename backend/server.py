@@ -95,11 +95,19 @@ def getJournals(uid):
 '''
 Add a journal entry to the database
 '''
-@app.route('/edit-current-journal/<string:uid>', methods=['POST'])
-def editCurrentJournal(uid):
+@app.route('/edit-current-data/<string:uid>', methods=['POST'])
+def editCurrentData(uid):
     data = request.get_json()
     print(data)
-    db.collection(u'Users').document(u'{}'.format(uid)).collection(u'journals').add(data)
+    user_ = db.collection('Users').document(u'{}'.format(uid))
+    user = user_.get().to_dict()
+    updateCurrentData(user_, user)
+    today = {
+        u'date': u'{}'.format(getCurrentDate()),
+        u'journal-entry': u'{}'.format(data.get("journal-entry")),
+        u'mood': u'{}'.format(data.get("mood"))
+    }
+    user_.set({u'today': today})
     return data
 
 '''
