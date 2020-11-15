@@ -13,7 +13,7 @@ class App extends Component {
       <Router>
         <div>
           <SaplingNavbar />
-          <Route exact path="/" component={Home} />
+          <Route exact path="/home" component={Home} />
           <Route exact path="/resources" component={Resources} />
           <Route exact path="/journal" component={Journal} />
           <Route exact path="/settings" component={Settings} />
