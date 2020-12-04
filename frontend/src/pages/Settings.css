@@ -4,3 +4,21 @@
     margin-right: auto;
     width: 50%;
 }
+
+.top {
+    display: flex;  
+    text-align: center;
+    margin-top: 100;
+}
+
+.new-line {
+    white-space: pre-line;
+  }
+
+  span + span {
+    margin-left: 10px;
+}
+
+.h4 {
+    text-align: left;
+  }
