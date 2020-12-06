@@ -21,6 +21,14 @@ CORS(app)
 def getCurrentDate():
     today = date.today()
     return today.strftime("%m-%d-%Y")
+    
+def setUserToday(userRef, current_date, journal_entry, mood):
+    today = {
+        u'date': u'{}'.format(current_date),
+        u'journal-entry': u'{}'.format(journal_entry),
+        u'mood': u'{}'.format(mood)
+    }
+    userRef.set({u'today': today}, merge=True)
 
 def updateCurrentData(userRef, user):
     previous_date = user["today"]["date"]
@@ -32,12 +40,7 @@ def updateCurrentData(userRef, user):
             "mood": user["today"]["mood"]
         }
         userRef.collection(u'data').add(yesterday)
-        today = {
-            u'date': u'{}'.format(current_date),
-            u'journal-entry': u'',
-            u'mood': u''
-        }
-        userRef.set({u'today': today})
+        setUserToday(userRef, current_date, "", "")
 
 '''
 Return all resources in database
@@ -80,19 +83,6 @@ def getUserData(uid):
     return json.dumps(journals)
 
 '''
-Return all journals in database for particular user
-'''
-@app.route('/get-journals/<string:uid>')
-def getJournals(uid):
-    docs = db.collection('Users').document(u'{}'.format(uid)).collection(u'journals').stream()
-    journals = []
-    for doc in docs:
-        data = doc.to_dict()
-        print(data)
-        journals.append(data)
-    return json.dumps(journals)
-
-'''
 Add a journal entry to the database
 '''
 @app.route('/edit-current-data/<string:uid>', methods=['POST'])
@@ -102,36 +92,62 @@ def editCurrentData(uid):
     user_ = db.collection('Users').document(u'{}'.format(uid))
     user = user_.get().to_dict()
     updateCurrentData(user_, user)
-    today = {
-        u'date': u'{}'.format(getCurrentDate()),
-        u'journal-entry': u'{}'.format(data.get("journal-entry")),
-        u'mood': u'{}'.format(data.get("mood"))
-    }
-    user_.set({u'today': today})
+    setUserToday(user_, getCurrentDate(), data.get("journal-entry"), data.get("mood"))
     return data
 
-'''
-Return all moods in database for particular user
-'''
-@app.route('/get-moods/<string:uid>')
-def getMoods(uid):
-    docs = db.collection('Users').document(u'{}'.format(uid)).collection(u'moods').stream()
-    moods = []
-    for doc in docs:
-        data = doc.to_dict()
-        print(data)
-        moods.append(data)
-    return json.dumps(moods)
-
-'''
-Add mood entry to database
-'''
-@app.route('/edit-current-mood/<string:uid>', methods=['POST'])
-def editCurrentMood(uid):
+@app.route('/add-user/<string:uid>')
+def addUser(uid):
     data = request.get_json()
-    print(data)
-    db.collection(u'Users').document(u'{}'.format(uid)).collection(u'moods').add(data)
-    return data
+    user_ref = db.collection('Users').document(u'{}'.format(uid))
+    user = user_ref.get()
+    if user.exists:
+        return {
+            u'success': False,
+            u'message': u'Username already exists!'
+        }
+    else:
+        user_data = {
+            u'uid': u'{}'.format(uid),
+            u'password': u'{}'.format(data.get("password"))
+        }
+        user_ref.set(user_data)
+        setUserToday(user_ref, getCurrentDate(), "", "")
+
+# '''
+# Return all journals in database for particular user
+# '''
+# @app.route('/get-journals/<string:uid>')
+# def getJournals(uid):
+#     docs = db.collection('Users').document(u'{}'.format(uid)).collection(u'journals').stream()
+#     journals = []
+#     for doc in docs:
+#         data = doc.to_dict()
+#         print(data)
+#         journals.append(data)
+#     return json.dumps(journals)
+
+# '''
+# Return all moods in database for particular user
+# '''
+# @app.route('/get-moods/<string:uid>')
+# def getMoods(uid):
+#     docs = db.collection('Users').document(u'{}'.format(uid)).collection(u'moods').stream()
+#     moods = []
+#     for doc in docs:
+#         data = doc.to_dict()
+#         print(data)
+#         moods.append(data)
+#     return json.dumps(moods)
+
+# '''
+# Add mood entry to database
+# '''
+# @app.route('/edit-current-mood/<string:uid>', methods=['POST'])
+# def editCurrentMood(uid):
+#     data = request.get_json()
+#     print(data)
+#     db.collection(u'Users').document(u'{}'.format(uid)).collection(u'moods').add(data)
+#     return data
 
 if __name__ == '__main__':
     app.run()
