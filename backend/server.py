@@ -3,12 +3,12 @@ import firebase_admin
 from firebase_admin import credentials, firestore, auth
 from flask_cors import CORS
 import json
+from datetime import date
 
 '''
 Backend API to connect client with Firebase database storing our alumni
 '''
 
-# initialize firebase sdk
 cred = credentials.Certificate("./serviceAccountKey.json")
 firebase_admin.initialize_app(cred)
 
@@ -16,6 +16,27 @@ db = firestore.client()
 
 app = Flask(__name__)
 CORS(app)
+
+def getCurrentDate():
+    today = date.today()
+    return today.strftime("%m-%d-%Y")
+
+def updateCurrentData(userRef, user):
+    previous_date = user["today"]["date"]
+    current_date = getCurrentDate()
+    if previous_date != current_date:
+        yesterday = {
+            "date": previous_date,
+            "journal-entry": user["today"]["journal-entry"],
+            "mood": user["today"]["mood"]
+        }
+        userRef.collection(u'data').add(yesterday)
+        today = {
+            u'date': u'{}'.format(current_date),
+            u'journal-entry': u'',
+            u'mood': u''
+        }
+        userRef.set({u'today': today})
 
 '''
 Return all resources in database
@@ -43,63 +64,55 @@ def getResource(id):
 '''
 Return all data for particular user from document id
 '''
-@app.route('/get-userData/<string:uid>')
+@app.route('/get-user-data/<string:uid>')
 def getUserData(uid):
-    docRef = db.collection(u'Users').document(u'{}'.format(uid))
-    doc = docRef.get().to_dict()
-    data = {
-        'name' : doc['name'],
-        'email' : doc['email'],
-        'journals' : getJournals(uid),
-        'moods' : getMoods(uid),
-    }
-    return json.dumps(data)
-
-'''
-Return all journals in database for particular user
-'''
-@app.route('/get-journals/<string:uid>')
-def getJournals(uid):
-    docs = db.collection('Users').document(u'{}'.format(uid)).collection(u'journals').stream()
+    user_ = db.collection('Users').document(u'{}'.format(uid))
+    user = user_.get().to_dict()
+    updateCurrentData(user_, user)
+    userData = user_.collection(u'data').stream()
     journals = []
-    for doc in docs:
+    for doc in userData:
         data = doc.to_dict()
         print(data)
         journals.append(data)
+    journals.append(user["today"])
     return json.dumps(journals)
+
+
 
 '''
 Add a journal entry to the database
 '''
-@app.route('/add-journal/<string:uid>', methods=['POST'])
-def addJournal(uid):
+@app.route('/edit-current-data/<string:uid>', methods=['POST'])
+def editCurrentData(uid):
     data = request.get_json()
     print(data)
-    db.collection(u'Users').document(u'{}'.format(uid)).collection(u'journals').add(data)
+    user_ = db.collection('Users').document(u'{}'.format(uid))
+    user = user_.get().to_dict()
+    updateCurrentData(user_, user)
+    today = {
+        u'date': u'{}'.format(getCurrentDate()),
+        u'journal-entry': u'{}'.format(data.get("journal-entry")),
+        u'mood': u'{}'.format(data.get("mood"))
+    }
+    user_.set({u'today': today})
     return data
 
-'''
-Return all moods in database for particular user
-'''
-@app.route('/get-moods/<string:uid>')
-def getMoods(uid):
-    docs = db.collection('Users').document(u'{}'.format(uid)).collection(u'moods').stream()
-    moods = []
-    for doc in docs:
-        data = doc.to_dict()
-        print(data)
-        moods.append(data)
-    return json.dumps(moods)
-
-'''
-Add mood entry to database
-'''
-@app.route('/add-mood/<string:uid>', methods=['POST'])
-def addMood(uid):
+@app.route('/add-user', methods = ['POST'])
+def addUser():
     data = request.get_json()
     print(data)
-    db.collection(u'Users').document(u'{}'.format(uid)).collection(u'moods').add(data)
+    userData = {
+        u'password': u'{}'.format(data.get("password")),
+        u'today': {
+            u'date': u'{}'.format(getCurrentDate()),
+            u'journal-entry': "",
+            u'mood': ""
+        }
+    }
+    db.collection(u'Users').add(userData)
     return data
+
 
 if __name__ == '__main__':
     app.run()
