@@ -1,0 +1,16 @@
+.form-nivel label:nth-child(1) {
+    width: 160px;
+    float: left;
+    height: 20px;
+    line-height: 20px;
+    margin-right: 10px;
+    text-align: right;
+}
+
+.form-nivel label:nth-child(2) {
+    width: 160px;
+    height: 20px;
+    line-height: 20px;
+    margin-right: 10px;
+    text-align: right;
+}

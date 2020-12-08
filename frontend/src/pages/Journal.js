@@ -5,9 +5,57 @@ import excited from './excited.png';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { Form, FormControl, Button } from "react-bootstrap";
 import { StyleSheet, Text, View, Image } from 'react';
-
+import "./Journal.css";
 export default class Journal extends Component {
+  
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoaded: false,
+      studentData: [],
+    };
+  }
+
+
+  async componentDidMount() { // Get request to grab all students
+    const host = 'http://localhost:3000';
+    console.log(host + '/journal');
+    try {
+      const response = await fetch(host + '/journal');
+      const data = await response.json();
+      this.setState({
+        isLoaded: true,
+        studentData: data,
+      });
+    } catch (e) {
+      this.setState({
+        isLoaded: true,
+      });
+    }
+  }
+
   render() {
+
+    /*const { isLoaded, studentData } = this.state;
+    if (!isLoaded) {
+      return <div>Loading...</div>;
+    } else {
+      var data = [];
+      for (var i = 0; i < studentData.length; ++i) {
+        data.push(
+          <Student
+            key={studentData[i].id}
+            id={studentData[i].id}
+            name={studentData[i].name}
+            picture={studentData[i].picture}
+            major={studentData[i].major}
+            gradYear={studentData[i].gradYear}
+            title={studentData[i].title}
+            setStudent={this.props.setStudent}
+          />
+        );
+      }*/
+
     return (
 
       <div className = "journal">
