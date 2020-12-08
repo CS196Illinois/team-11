@@ -10,13 +10,29 @@ export default class Journal extends Component {
   render() {
     return (
 
-          <div>
+      <div className = "journal">
           <br></br>
           <br></br>
           <br></br>
           <h3>Journal</h3> 
+         <div>
 
-        <div>
+          <h1>How are you feeling?</h1> 
+          <h2>Select a plant that represents your current mood</h2>
+          
+          <div class = "images">
+          <button> < img src = {content} alt = "content cactus" onClick={this.buttonSave}
+       />  </button>
+          
+      
+          <button>< img src = {frustrated} alt = "frustrated cactus"
+       /> </button>
+
+          <button> < img src = {excited} alt = "frustrated cactus"
+       /></button>
+      </div>
+
+        
         <InputGroup>
          <InputGroup.Prepend>
            <InputGroup.Text>Log your feelings!</InputGroup.Text>
@@ -25,7 +41,9 @@ export default class Journal extends Component {
         </InputGroup>
         </div>
         <br></br>
-        <Button variant="success">Submit</Button>{' '}
+        <Button variant="success">Enter Into Your Journal</Button>{' '}
+      
+
       </div>
         
 
@@ -33,4 +51,9 @@ export default class Journal extends Component {
     
     );
   }
+
+  buttonSave() {
+            console.log("content button clicked");
+          }
+
 }
