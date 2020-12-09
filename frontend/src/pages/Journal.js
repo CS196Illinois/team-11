@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import frustrated from './frustrated.png';
-import content from './content.png';
-import excited from './excited.png';
+import frustrated from '../images/frustrated.png';
+import content from '../images/content.png';
+import excited from '../images/excited.png';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { Form, FormControl, Button } from "react-bootstrap";
 import { StyleSheet, Text, View, Image } from 'react';
 import "./Journal.css";
+
 export default class Journal extends Component {
   
   constructor(props) {
