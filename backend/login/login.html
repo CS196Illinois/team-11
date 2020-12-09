@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <link rel="stylesheet" href="styles.css">
+        <link href="https://fonts.googleapis.com/css?family=Hind" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script src="html2canvas/dist/html2canvas.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.14.2/TweenMax.min.js"></script>
+        <script src="scrollmagic/scrollmagic/minified/ScrollMagic.min.js"></script>
+        <script src="scrollmagic/scrollmagic/minified/plugins/animation.gsap.min.js"></script>
+        <script src="scrollmagic/scrollmagic/minified/plugins/debug.addIndicators.min.js"></script>
+        <script src="stylizer.js"></script>
+        <script src="settings.js"></script>
+        <title>Sign in -</title>
+        <script>
+            var arg = location.href.substring(location.href.indexOf("?")+1).split('=');
+            var db;
+            con.onopen = function () {
+                if (arg[0] === "organization")
+                    toServ("getDBName", arg[1]);
+                else {
+                    db = "main";
+                    if (arg[1] === "buy") {
+                        $("#buy").removeClass("menu-button");
+                        $("#buy").addClass("menu-button-pending");
+                    }
+                    else if (arg[1] === "play") {
+                        $("#play").removeClass("menu-button");
+                        $("#play").addClass("menu-button-pending");
+                    }
+                }
+            };
+            $(document).ready(function() {
+                $( 'body' ).on( 'keyup', function( evt ) {
+                    if ( evt.key === "Enter" ) onSubmit();
+                });
+            });
+            function failLogin() {
+                $("#login-button").text("Sign in");
+                $("#login-button").effect("shake");
+                $("#login-incorrect").show();
+                $("#login-incorrect").text("You have entered incorrect sign-in info. Please check your username and password, then try again.");
+            }
+            function onSubmit() {
+                $("#login-button").text("Please wait");
+                var username = $("#username").val();
+                var password = $("#password").val();
+                if (checkBadChars(username) || checkBadChars(password)) {
+                        failLogin();
+                }
+                else toServ("login", {"db":db, "username":username, "password":password});
+            }
+            function onMessage(data) {
+                switch (data[0]) {
+                    case "login":
+                        if (data[1] === 'false') {
+                            failLogin();
+                        }
+                        else {
+                            goTo(db, data[1], data[2], data[3]);
+                        }
+                        break;
+                    case "getDBName":
+                        if (data[1] === "false") {
+                            db = "main";
+                        }
+                        else {
+                            db = arg[1];
+                            $("#school-banner").show();
+                            $("#school-banner").append(data[1]);
+                            $("#forgot-password").hide();
+                            $("#create-account").html("<a onclick='signUp()'>Create account</a>");
+                            $("#username").attr("Placeholder", "Username");
+                            $(".menu-button").hide();
+                            $(".menu-button-active").hide();
+                        }
+                        makeAcrylic("login-container");
+                        break;
+                }
+            }
+            function goTo(database, type, username, sessionid) {
+                window.localStorage.setItem("Session", database + "~" + type + "~" + username + "~" + sessionid);
+                if (db === "main" && arg[0] === 'dest') window.location.href = arg[1] + '.html';
+                else {
+                    if (type === 'admin0') window.location.href = 'admin0.html';
+                    else if (type === 'admin1') window.location.href = 'admin1.html';
+                    else window.location.href = 'user.html';
+                }
+            }
+            
+            function buy() {
+                if (arg[1] !== "buy") window.location.href = "sign_in.html?dest=buy";
+            }
+            function play() {
+                if (arg[1] !== "play") window.location.href = "sign_in.html?dest=play";
+            }
+            function forSchools() {
+                window.location.href = "enterprise.html";
+            }
+            function signUp() {
+                if (db === "main") window.location.href = "sign_up.html";
+                else window.location.href = "sign_up.html?" + arg[0] + "=" + arg[1];
+            }
+        </script>
+        <style>
+            #school-banner {
+                display: none;
+                padding-top: 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container1-wrapper" data-html2canvas-ignore="true">
+            <div class="container-header">Sign into your account</div>
+            <input id="username" class="container-input" type="text" Placeholder="Username or email">
+            <input id="password" class="container-input" type="password" Placeholder="Password">
+            <div id="forgot-password" class="container-text"><a href="index.html">Forgot password?</a></div>
+            <div id="login-button" class="container-button" onclick="onSubmit()">Sign in</div>
+            <div id="login-incorrect" class="container-hint"></div>
+            <div id="create-account" class="container-text">Don't have an account? <a onclick="signUp()">Sign up!</a></div>
+        </div>
+        
+        <div id="menu-wrapper" data-html2canvas-ignore="true"><div id="menu" class="acrylic"></div><div class="acrylic-content">
+            <div id="logo-placeholder"></div>
+            <div id="buy" class="menu-button" onclick="buy()">Buy</div>
+            <div id="play" class="menu-button" onclick="play()">Play Demo</div>
+            <div class="menu-button" onclick="forSchools()">For Schools</div>
+            <div class="menu-options">
+                <div class="menu-button" onclick="signUp()">Sign up</div>
+                <div class="menu-button-active">Sign in</div>
+                <div id="school-banner" class="menu-text"><img src="school-icon.png" alt="" height="30" style="position: relative; top: 10px; margin-right: 10px;"></div>
+            </div>
+        </div></div>
+    </body>
+</html>
