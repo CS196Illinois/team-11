@@ -9,7 +9,6 @@ from datetime import date
 Backend API to connect client with Firebase database storing our alumni
 '''
 
-# initialize firebase sdk
 cred = credentials.Certificate("./serviceAccountKey.json")
 firebase_admin.initialize_app(cred)
 
@@ -82,6 +81,8 @@ def getUserData(uid):
     journals.append(user["today"])
     return json.dumps(journals)
 
+
+
 '''
 Add a journal entry to the database
 '''
@@ -148,6 +149,22 @@ def addUser(uid):
 #     print(data)
 #     db.collection(u'Users').document(u'{}'.format(uid)).collection(u'moods').add(data)
 #     return data
+
+# @app.route('/add-user', methods = ['POST'])
+# def addUser():
+#     data = request.get_json()
+#     print(data)
+#     userData = {
+#         u'password': u'{}'.format(data.get("password")),
+#         u'today': {
+#             u'date': u'{}'.format(getCurrentDate()),
+#             u'journal-entry': "",
+#             u'mood': ""
+#         }
+#     }
+#     db.collection(u'Users').add(userData)
+#     return data
+
 
 if __name__ == '__main__':
     app.run()
