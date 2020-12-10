@@ -3,6 +3,8 @@ import firebase_admin
 from firebase_admin import credentials, firestore, auth
 from flask_cors import CORS
 import json
+import string
+import random
 from datetime import date
 
 '''
@@ -16,6 +18,9 @@ db = firestore.client()
 
 app = Flask(__name__)
 CORS(app)
+
+def GenerateID():
+    return ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=50))
 
 def getCurrentDate():
     today = date.today()
@@ -40,6 +45,10 @@ def updateCurrentData(userRef, user):
         }
         userRef.collection(u'data').add(yesterday)
         setUserToday(userRef, current_date, "", "")
+
+def authenticate(user_dict, sessionid):
+    return user_dict["sessionid"] == sessionid
+
 
 '''
 Return all resources in database
@@ -96,12 +105,14 @@ def editCurrentData(uid):
     setUserToday(user_, getCurrentDate(), data.get("journal-entry"), data.get("mood"))
     return data
 
-@app.route('/add-user/<string:uid>')
+@app.route('/add-user/<string:uid>', methods=['POST'])
 def addUser(uid):
-    data = request.get_json()
+    print("bruh moment")
+    data = request.form
     user_ref = db.collection('Users').document(u'{}'.format(uid))
     user = user_ref.get()
     if user.exists:
+        print("This username already exists you dumbass, waht are you doing with ur life")
         return {
             u'success': False,
             u'message': u'Username already exists!'
@@ -113,6 +124,36 @@ def addUser(uid):
         }
         user_ref.set(user_data)
         setUserToday(user_ref, getCurrentDate(), "", "")
+        return {
+            u'success': True,
+            u'message': u'User created!'
+        }
+
+@app.route('/login/<string:uid>', methods=['POST'])
+def login(uid):
+    data = request.form
+    print(data)
+    user_ref = db.collection('Users').document(u'{}'.format(uid))
+    user = user_ref.get()
+    if user.exists:
+        user_dict = user.to_dict()
+        if (data.get("password") == user_dict["password"]):
+            sessionid = GenerateID();
+            print(sessionid)
+            user_ref.set({u'sessionid': u'{}'.format(sessionid)}, merge=True)
+            return {
+                u'success': True,
+                u'sessionid': u'{}'.format(sessionid),
+                u'message': u'Big dog status monday'
+            }
+        else:
+            print("nah");
+    else:
+        print("nope");
+    return {
+        u'success': False,
+        u'message': u'Invalid username or password.'
+    }
 
 # '''
 # Return all journals in database for particular user
