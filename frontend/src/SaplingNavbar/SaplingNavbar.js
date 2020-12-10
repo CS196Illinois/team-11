@@ -8,9 +8,9 @@ function handleSelect() {
 }
 export default function SaplingNavbar() {
     return (
-      <Navbar bg="dark" variant="dark">
-      <Navbar.Brand href="/home">Sapling</Navbar.Brand>
-      <Nav className="Sapling">
+      <Navbar fixed="top" bg = "dark" variant="dark">
+        <Navbar.Brand className=""><Link href="/home">Sapling</Link></Navbar.Brand>
+      <Nav className="mr-auto">
       </Nav>
       <Form inline>
       <Nav.Item>
