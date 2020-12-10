@@ -28,3 +28,7 @@
 .container .btn:hover {
     background-color: black;
 }
+
+.images {
+    display: flex;
+}
