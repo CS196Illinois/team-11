@@ -17,9 +17,11 @@ db = firestore.client()
 app = Flask(__name__)
 CORS(app)
 
+
 def getCurrentDate():
     today = date.today()
     return today.strftime("%m-%d-%Y")
+
 
 def updateCurrentData(userRef, user):
     print(user)
@@ -39,9 +41,12 @@ def updateCurrentData(userRef, user):
         }
         userRef.set({u'today': today})
 
+
 '''
 Return all resources in database
 '''
+
+
 @app.route('/resources')
 def getResources():
     docs = db.collection(u'Resources').stream()
@@ -52,9 +57,12 @@ def getResources():
         values.append(data)
     return json.dumps(values)
 
+
 '''
 Return all information on one specific resource
 '''
+
+
 @app.route('/get-resource/<string:id>')
 def getResource(id):
     doc_ref = db.collection(u'Resources').document(u'{}'.format(id))
@@ -62,9 +70,12 @@ def getResource(id):
     print(doc)
     return json.dumps(doc)
 
+
 '''
 Return all data for particular user from document id
 '''
+
+
 @app.route('/get-user-data/<string:uid>')
 def getUserData(uid):
     user_ = db.collection('Users').document(u'{}'.format(uid))
@@ -80,10 +91,11 @@ def getUserData(uid):
     return json.dumps(journals)
 
 
-
 '''
 Add a journal entry to the database
 '''
+
+
 @app.route('/edit-current-data/<string:uid>', methods=['POST'])
 def editCurrentData(uid):
     data = request.get_json()
@@ -99,7 +111,8 @@ def editCurrentData(uid):
     user_.set({u'today': today})
     return data
 
-@app.route('/add-user', methods = ['POST'])
+
+@app.route('/add-user', methods=['POST'])
 def addUser():
     data = request.get_json()
     print(data)

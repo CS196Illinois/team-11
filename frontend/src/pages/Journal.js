@@ -11,6 +11,9 @@ export default class Journal extends Component {
   
   constructor(props) {
     super(props);
+    this.buttonSave1 = this.buttonSave1.bind(this);
+    this.buttonSave2 = this.buttonSave2.bind(this);
+    this.buttonSave3 = this.buttonSave3.bind(this);
     this.state = {
       isLoaded: false,
       studentData: [],
@@ -70,14 +73,14 @@ export default class Journal extends Component {
           <h2>Select a plant that represents your current mood</h2>
           
           <div class = "images">
-          <button> < img src = {content} alt = "content cactus" onClick={this.buttonSave}
+          <button> < img src = {content} alt = "content cactus" onClick={this.buttonSave1}
        />  </button>
           
       
-          <button>< img src = {frustrated} alt = "frustrated cactus"
+          <button>< img src = {frustrated} alt = "frustrated cactus" onClick={this.buttonSave2}
        /> </button>
 
-          <button> < img src = {excited} alt = "frustrated cactus"
+          <button> < img src = {excited} alt = "excited cactus" onClick={this.buttonSave3}
        /></button>
       </div>
 
@@ -101,8 +104,52 @@ export default class Journal extends Component {
     );
   }
 
-  buttonSave() {
-            console.log("content button clicked");
+  //content button
+  async buttonSave1(event) {
+              // POST request using fetch with set headers
+
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mood: 'content' })
+    };
+    console.log("here");
+    const response = await fetch('http://localhost:5000/edit-current-data/bmOe4PXt08UaxM1I1REj', requestOptions);
+    const data = await response.json();
+    this.setState({ postMood: data.mood });
+    }
+
+
+    
+    async buttonSave2() {
+              // POST request using fetch with set headers
+
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mood: 'frustrated' })
+    };
+    console.log("here");
+    const response = await fetch('http://localhost:5000/edit-current-data/bmOe4PXt08UaxM1I1REj', requestOptions);
+    const data = await response.json();
+    this.setState({ postId: data.id });
+          }
+
+  
+  
+    
+          async buttonSave3() {
+              // POST request using fetch with set headers
+            
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mood: 'excited' })
+    };
+    console.log("here");
+    const response = await fetch('http://localhost:5000/edit-current-data/bmOe4PXt08UaxM1I1REj', requestOptions);
+    const data = await response.json();
+    this.setState({ postId: data.id });
           }
 
 }
