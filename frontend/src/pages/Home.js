@@ -70,16 +70,37 @@ export default class Home extends Component {
         <br></br>
         <br></br>
         <br></br>
-          <h2 className="feelings">Hello, user. Have you journaled today? </h2>
+          <h2>Hello, user. Have you journaled today? </h2>
           <a href="/journal"><Button variant="outline-success">Log my feelings</Button></a>
         </div>
         <br></br>
         <h2>My past week </h2>
-          <div>{data}</div>
-        <Form inline>
-      <FormControl type="text" placeholder="Look up an entry" className="mr-sm-2" />
-      <Button variant="outline-success">Go</Button>
-    </Form>
+          <div className='feelings'>
+            {data}
+            
+            </div>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+
     </div>
     );
   }
