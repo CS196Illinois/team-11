@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <link rel="stylesheet" href="_styles.css">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Karla:wght@500" rel="stylesheet">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="_functions.js"></script>
+        <title>Sign in - Sapling</title>
+        <script>
+            function loginResult(data, status) {
+                if (data.success === true) {
+                    window.location.href = "index.html";
+                } else {
+                    failLogin("An account with that username already exists.");
+                }
+            }
+            function failLogin(message) {
+                $("#login-button").text("Create account");
+                $("#login-incorrect").text(message);
+            }
+            function submit() {
+                $("#login-button").text("Please wait");
+                var username = $("#username").val();
+                var password = $("#password").val();
+                var password2 = $("#confirm-password").val();
+                if (username === "") {
+                    failLogin("Username cannot be empty.");
+                } else if (password === "") {
+                    failLogin("Password cannot be empty.");
+                } else if (password !== password2) {
+                    failLogin("Passwords do not match.");
+                } else {
+                    $.post("http://127.0.0.1:5000/add-user/" + username, {"password":password}, loginResult);
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <div id="container1-wrapper">
+            <img src="logo.png" style="margin-bottom: 30px;">
+            <div class="container-header">Create a new account</div>
+            <input id="username" class="container-input" type="text" Placeholder="Username">
+            <input id="password" class="container-input" type="password" Placeholder="Password">
+            <input id="confirm-password" class="container-input" type="password" Placeholder="Confirm Password">
+            <div id="login-button" class="container-button" onclick="submit()">Create account</div>
+            <div id="login-incorrect" class="container-hint"></div>
+            <div id="create-account" class="container-text"><a href="sign_in.html">Sign into an existing account</a></div>
+        </div>
+    </body>
+</html>
