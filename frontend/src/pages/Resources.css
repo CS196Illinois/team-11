@@ -1,0 +1,17 @@
+.resources {
+  background-color: darkseagreen;
+}
+.cardGroup {
+
+  padding: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  align-self: center;
+}
+.card {
+
+  padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  align-self: center;
+}
