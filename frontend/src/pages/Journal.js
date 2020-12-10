@@ -95,6 +95,27 @@ export default class Journal extends Component {
         <br></br>
         <Button variant="success">Enter Into Your Journal</Button>{' '}
       
+      <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
 
       </div>
         
